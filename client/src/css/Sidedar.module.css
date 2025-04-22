@@ -1,143 +1,226 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Poppins:wght@600&display=swap');
 
 .sidebarBody {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
+  transition: all 0.3s ease;
+  position: fixed;
+  z-index: 1000;
 }
 
 .sidebar {
-    flex: 1;
-    background: green;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.3s ease;
-    width: auto;
-    max-width: 250px;
+  background: linear-gradient(180deg, #1E3A8A 0%, #3B82F6 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: width 0.3s ease;
+  width: 260px;
+  font-family: 'Ubuntu', sans-serif;
 }
 
-.sidebar.sidebarOpen {
-    left: 0; /* Muestra la sidebar cuando está abierta */
+.sidebarBody.sidebarClosed .sidebar {
+  width: 80px;
 }
 
-.sidebar .sidebarLink {
-    font-size: 24px;
-    font-weight: 500;
-    color: #eee;
-    text-decoration: none;
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.sidebar .side-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.sidebarTitle {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  text-decoration: none;
 }
 
-.sidebar .side-nav .item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 12px;
-    border-radius: 10px;
-    cursor: pointer;
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
 }
 
-.sidebar .side-nav .item .sidebarLink {
-    color: #a4a8ac;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.3s ease;
+.toggleButton {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.sidebar .side-nav .item i {
-    font-size: 20px;
-    color: #a4a8ac;
-    transition: all 0.3s ease;
+.toggleButton:hover {
+  transform: scale(1.1);
 }
 
-.sidebar .side-nav .item.active {
-    background: #fafafa;
+.sideNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
 }
 
-.sidebar .side-nav .item.active .sidebarLink,
-.sidebar .side-nav .item.active i {
-    color: #111;
-    font-weight: bold;
+.sideNav .item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.sidebar .side-nav .item:hover .sidebarLink,
-.sidebar .side-nav .item:hover i {
-    color: #fafafa;
+.sideNav .item i {
+  font-size: 22px;
+  color: #BFDBFE;
+  transition: transform 0.3s ease;
 }
 
-.sidebar .side-profile {
-    background: #fafafa;
-    padding: 14px 10px;
-    border-radius: 10px;
+.sideNav .item .sidebarLink {
+  font-size: 15px;
+  color: #BFDBFE;
+  text-decoration: none;
 }
 
-.sidebar .side-profile .info img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
+.sideNav .item:hover {
+  background: #2563EB;
 }
 
-.sidebar .side-profile .info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.sideNav .item:hover i {
+  transform: scale(1.1);
 }
 
-.sidebar .side-profile .info .sidebarLink {
-    font-weight: bold;
-    margin-top: 8px;
-    color: #111;
-    text-decoration: none;
-    font-size: 14px;
+.sideNav .item:hover .sidebarLink,
+.sideNav .item:hover i {
+  color: #fff;
 }
 
-.sidebar .side-profile .info .sidebarText {
-    font-size: 12px;
-    color: #666869;
-    margin: 6px 0 25px;
+.sideNav .item.active {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar .side-profile .skills .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+.sideNav .item.active .sidebarLink,
+.sideNav .item.active i {
+  color: #1E3A8A;
+  font-weight: 500;
 }
 
-.sidebar .side-profile .skills .skill-tags .item {
-    padding: 6px;
-    border-radius: 4px;
-    background: #e7e7e7;
-    font-size: 10px;
-    font-weight: 500;
-    color: #666869;
+.sideNav .item[data-tooltip]:hover:after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1E3A8A;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  margin-left: 10px;
 }
 
-.sidebar .side-profile button {
-    margin-top: 16px;
+.sideProfile {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sideProfile .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sideProfile .profileImg {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.sideProfile .profileImg:hover {
+  transform: scale(1.05);
+}
+
+.sideProfile .profileName {
+  font-weight: 600;
+  color: #1E3A8A;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.sideProfile .profileText {
+  font-size: 12px;
+  color: #4B5563;
+  margin: 6px 0;
+}
+
+.profileActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.profileButton,
+.logoutButton {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Ubuntu', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.profileButton {
+  background: #3B82F6;
+  color: #fff;
+}
+
+.profileButton:hover {
+  background: #2563EB;
+}
+
+.logoutButton {
+  background: #EF4444;
+  color: #fff;
+}
+
+.logoutButton:hover {
+  background: #DC2626;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebarBody {
     width: 100%;
-    border: none;
-    padding: 10px;
-    background: rgb(3, 95, 0);
-    color: #fafafa;
-    border-radius: 10px;
-    cursor: pointer;
-}
+    z-index: 1000;
+  }
 
-@media screen and (max-width: 1430px) {
-    .sidebar .side-profile .skills h5,
-    .sidebar .side-profile .skills .skill-tags {
-        display: none;
-    }
+  .sidebarBody.sidebarOpen .sidebar {
+    width: 260px;
+  }
 
-    .sidebar .side-profile button {
-        margin-top: 0;
-    }
+  .sidebarBody.sidebarClosed .sidebar {
+    width: 60px;
+  }
+
+  .sideNav .item[data-tooltip]:hover:after {
+    display: none;
+  }
 }

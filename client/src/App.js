@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Importa Router, Routes y Route
-import LoginPage from './componentes/LoginPage';
-import Home from './componentes/Sidebar';
-import Layout from './layouts/layout';
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom'; // Importa Router, Routes y Route
+import TutorDetails from './views/TutorDetailsView';
+import Home from './views/HomeView';
+import Sidebar from './componentes/Sidebar';
+import Messages from './views/Messages';
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
@@ -16,15 +17,16 @@ function App() {
   }, []);
 
   return (
-    <Router> {/* Envuelve todo en BrowserRouter */}
+    <BrowserRouter>
+    <div className="flex">
+      <Sidebar />
       <Routes>
-        <Route path='/' element={<Layout />}>
-          <Route index element={<Home />} />
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-        {/* Otras rutas pueden ir aquí */}
-      </Routes>
-    </Router>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/tutor/:id" element={<TutorDetails />} />
+        <Route path="/messages" element={<Messages />} />
+      </Routes> 
+    </div>
+    </BrowserRouter>
   );
 }
 

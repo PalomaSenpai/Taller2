@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Poppins:wght@600&display=swap');
+
+/* Asegurar que los paddings y bordes no afecten el cálculo del ancho */
+* {
+  box-sizing: border-box;
+}
+
+.messagesWindow {
+  position: fixed;
+  top: 0;
+  left: 260px; /* Ajuste para la sidebar abierta */
+  width: calc(100vw - 260px); /* Ancho disponible después del sidebar */
+  height: 100vh;
+  background: #F9FAFB;
+  font-family: 'Ubuntu', sans-serif;
+  overflow-x: hidden; /* Sin scrollbar horizontal */
+  overflow-y: hidden;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0px; /* Márgenes casi nulos en todos los lados */
+  display: flex;
+  align-items: stretch;
+}
+
+.messagesLayout {
+  flex: 1;
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%; /* Evitar desborde */
+}
+
+.contactsList {
+  flex: 0 0 auto; /* No expandir más allá del contenido */
+  max-width: 360px; /* Ancho máximo */
+  width: 100%; /* Ajustarse al espacio disponible */
+  border-right: 1px solid #E5E7EB;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1E3A8A;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 16px;
+}
+
+.title i {
+  font-size: 28px;
+  color: #3B82F6;
+  margin-right: 8px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact:hover {
+  background: #F1F5F9;
+}
+
+.contactActive {
+  background: #E0F2FE;
+}
+
+.contactImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.contactInfo {
+  flex: 1;
+}
+
+.contactName {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1E3A8A;
+}
+
+.contactLastMessage {
+  font-size: 14px;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.contactMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.contactTime {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.unreadBadge {
+  background: #3B82F6;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.chatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Asegurar que no desborde */
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.backButton {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #3B82F6;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.chatHeaderImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.chatHeaderName {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1E3A8A;
+}
+
+.chatMessages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #F9FAFB;
+}
+
+.message {
+  max-width: 70%;
+  margin-bottom: 16px;
+}
+
+.messageSent {
+  margin-left: auto;
+}
+
+.messageReceived {
+  margin-right: auto;
+}
+
+.messageText {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.messageSent .messageText {
+  background: #3B82F6;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.messageReceived .messageText {
+  background: #fff;
+  color: #374151;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.messageTime {
+  display: block;
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.messageReceived .messageTime {
+  text-align: left;
+}
+
+.messageForm {
+  display: flex;
+  padding: 16px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #D1D5DB;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #374151;
+  margin-right: 12px;
+  transition: all 0.3s ease;
+}
+
+.messageInput:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.sendButton {
+  background: #3B82F6;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sendButton:hover {
+  background: #2563EB;
+}
+
+.noChat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.noChatImg {
+  width: 128px;
+  height: 128px;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.noChatText {
+  font-size: 18px;
+  color: #6B7280;
+}
+
+.contactsHidden {
+  display: none;
+}
+
+.chatVisible {
+  display: flex;
+}
+
+@media screen and (max-width: 768px) {
+  .messagesWindow {
+    left: 60px; /* Ajuste para la sidebar colapsada */
+    width: calc(100vw - 60px);
+  }
+
+  .container {
+    padding: 4px 8px 4px 4px; /* Márgenes pequeños en móviles */
+  }
+
+  .messagesLayout {
+    flex-direction: column;
+  }
+
+  .contactsList {
+    max-width: 100%; /* Ajustado para ocupar todo el ancho en móviles */
+    width: 100%;
+    border-right: none;
+  }
+
+  .chatArea {
+    display: none;
+  }
+
+  .chatVisible {
+    display: flex;
+  }
+
+  .contactsHidden {
+    display: none;
+  }
+
+  .backButton {
+    display: block;
+  }
+
+  .contactLastMessage {
+    max-width: 150px;
+  }
+}
