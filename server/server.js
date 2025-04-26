@@ -1,10 +1,27 @@
 const express = require('express');
-const app = express()
+const cors = require('cors');
+const routes = require('./routes');
+require('dotenv').config();
 
-app.get("/api", (req, res) => {
-  res.json("Hello World")
-})
+const app = express();
 
-app.listen(5000, () => {
-  console.log("Server is running on port 3000")
-})
+// Configuración de CORS para permitir peticiones desde el frontend
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+app.use(express.json());
+app.use('/api', routes);
+
+// Middleware de manejo de errores global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Algo salió mal en el servidor', error: err.message });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
