@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import styles from '../css/TutorDetail.module.css';
+import styles from './TutorDetail.module.css';
 
 const TutorDetails = () => {
   const { id } = useParams();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../css/Home.module.css';
+import styles from './Home.module.css'; // Asegúrate de que la ruta sea correcta
 
 const TutorsWindow = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,75 +11,43 @@ const TutorsWindow = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
+  const [tutors, setTutors] = useState([]); // Estado para tutores dinámicos
+  const [subjects, setSubjects] = useState([]); // Estado para materias dinámicas
+  const [loading, setLoading] = useState(true); // Estado para manejar carga
+  const [error, setError] = useState(null); // Estado para manejar errores
   const tutorsPerPage = 6;
 
-  // Datos de ejemplo con materias múltiples
-  const tutors = [
-    {
-      id: 1,
-      name: 'Ana Gómez',
-      subjects: ['Matemáticas', 'Álgebra', 'Cálculo'],
-      rating: 4.8,
-      availability: 'Inmediata',
-      img: '/images/tutor1.webp',
-    },
-    {
-      id: 2,
-      name: 'Carlos Ruiz',
-      subjects: ['Programación', 'Bases de Datos'],
-      rating: 4.5,
-      availability: 'Tarde',
-      img: '/images/tutor2.webp',
-    },
-    {
-      id: 3,
-      name: 'María López',
-      subjects: ['Física', 'Mecánica'],
-      rating: 4.9,
-      availability: 'Inmediata',
-      img: '/images/tutor3.webp',
-    },
-    {
-      id: 4,
-      name: 'Juan Pérez',
-      subjects: ['Química', 'Química Orgánica', 'Bioquímica', 'Análisis Químico'],
-      rating: 4.2,
-      availability: 'Mañana',
-      img: '/images/tutor4.webp',
-    },
-    {
-      id: 5,
-      name: 'Sofía Martínez',
-      subjects: ['Matemáticas', 'Estadística'],
-      rating: 4.7,
-      availability: 'Inmediata',
-      img: '/images/tutor5.webp',
-    },
-    {
-      id: 6,
-      name: 'Luis Fernández',
-      subjects: ['Programación', 'Algoritmos', 'Estructuras de Datos'],
-      rating: 4.6,
-      availability: 'Tarde',
-      img: '/images/tutor6.webp',
-    },
-    {
-      id: 7,
-      name: 'Elena Díaz',
-      subjects: ['Física', 'Electromagnetismo'],
-      rating: 4.8,
-      availability: 'Mañana',
-      img: '/images/tutor7.webp',
-    },
-    {
-      id: 8,
-      name: 'Diego Torres',
-      subjects: ['Química', 'Química Analítica'],
-      rating: 4.3,
-      availability: 'Inmediata',
-      img: '/images/tutor8.webp',
-    },
-  ];
+  // Obtener tutores y materias del backend al montar el componente
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Obtener tutores y sus materias
+        const tutorsResponse = await fetch('http://localhost:5000/api/tutors');
+        if (!tutorsResponse.ok) {
+          throw new Error('Error al obtener los tutores');
+        }
+        const tutorsData = await tutorsResponse.json();
+        setTutors(tutorsData);
+
+        // Obtener lista de materias para el filtro
+        const subjectsResponse = await fetch('http://localhost:5000/api/subjects');
+        if (!subjectsResponse.ok) {
+          throw new Error('Error al obtener las materias');
+        }
+        const subjectsData = await subjectsResponse.json();
+        setSubjects(subjectsData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Filtrar tutores
   const filteredTutors = tutors.filter((tutor) => {
@@ -118,6 +86,15 @@ const TutorsWindow = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Mostrar estado de carga o error
+  if (loading) {
+    return <div className={styles.loading}>Cargando tutores...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>Error: {error}</div>;
+  }
 
   return (
     <div className={styles.tutorsWindow}>
@@ -161,22 +138,11 @@ const TutorsWindow = () => {
                 className={styles.filterSelect}
               >
                 <option value="all">Todas</option>
-                <option value="Matemáticas">Matemáticas</option>
-                <option value="Programación">Programación</option>
-                <option value="Física">Física</option>
-                <option value="Química">Química</option>
-                <option value="Álgebra">Álgebra</option>
-                <option value="Cálculo">Cálculo</option>
-                <option value="Estadística">Estadística</option>
-                <option value="Bases de Datos">Bases de Datos</option>
-                <option value="Mecánica">Mecánica</option>
-                <option value="Electromagnetismo">Electromagnetismo</option>
-                <option value="Química Orgánica">Química Orgánica</option>
-                <option value="Bioquímica">Bioquímica</option>
-                <option value="Química Analítica">Química Analítica</option>
-                <option value="Análisis Químico">Análisis Químico</option>
-                <option value="Algoritmos">Algoritmos</option>
-                <option value="Estructuras de Datos">Estructuras de Datos</option>
+                {subjects.map((subject) => (
+                  <option key={subject.Clave} value={subject.Nombre}>
+                    {subject.Nombre}
+                  </option>
+                ))}
               </select>
             </div>
             <div className={styles.filterGroup}>

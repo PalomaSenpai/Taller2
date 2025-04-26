@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import styles from '../css/Sidedar.module.css'; // Corrige el nombre del archivo (antes era Sidedar.module.css)
+import React, { useState, useContext } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import styles from './Sidebar.module.css';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleLogout = () => {
-    // Aquí puedes añadir la lógica para cerrar sesión, como limpiar el token o redirigir
-    console.log('Sesión cerrada');
-    // Ejemplo: window.location.href = '/login';
+    logout();
+    navigate('/login');
+  };
+
+  const handleViewProfile = () => {
+    navigate('/profile'); // Redirige a /profile
   };
 
   const navItems = [
-    { path: '/#', icon: 'bx-search-alt', label: 'Inicio', tooltip: 'Inicio' },
+    { path: '/', icon: 'bx-search-alt', label: 'Inicio', tooltip: 'Inicio' }, // Corrige /# a /
     { path: '/messages', icon: 'bx-message-square-dots', label: 'Mensajes', tooltip: 'Mensajes' },
     { path: '/subjects', icon: 'bx-briefcase', label: 'Materias', tooltip: 'Materias' },
     { path: '/settings', icon: 'bx-cog', label: 'Ajustes', tooltip: 'Ajustes' },
@@ -59,7 +65,7 @@ const Sidebar = () => {
 
         <div className={styles.sideProfile}>
           <div className={styles.info}>
-            <img src="/images/profile.webp" alt="Perfil" className={styles.profileImg} />
+            <img src="/images/Profile.png" alt="Perfil" className={styles.profileImg} />
             {isOpen && (
               <>
                 <Link to="/profile" className={styles.profileName}>Lince</Link>
@@ -69,7 +75,9 @@ const Sidebar = () => {
           </div>
           {isOpen && (
             <div className={styles.profileActions}>
-              <button className={styles.profileButton}>Ver Perfil</button>
+              <button className={styles.profileButton} onClick={handleViewProfile}>
+                Ver Perfil
+              </button>
               <button className={styles.logoutButton} onClick={handleLogout}>
                 Cerrar Sesión
               </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../css/Messages.module.css';
+import styles from './Messages.module.css';
 
 const Messages = () => {
   const [selectedContact, setSelectedContact] = useState(null);

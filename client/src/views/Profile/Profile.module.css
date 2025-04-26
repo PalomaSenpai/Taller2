@@ -1,0 +1,225 @@
+.profileContainer {
+  max-width: 700px;
+  width: 80%;
+  margin-left: 15%;
+  padding: 20px 0;
+}
+
+.profileCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+  min-height: 900px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.profileCard:hover {
+  transform: translateY(-2px);
+}
+
+.profileImageWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%);
+}
+
+.profileImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profileInfo {
+  padding: 40px;
+  text-align: center;
+}
+
+.profileName {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.profileRole {
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #a855f7;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.profileBio {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+.profileDetails {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.detailsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.detailLabel {
+  font-weight: 500;
+  color: #4a5568;
+  font-family: 'Inter', sans-serif;
+}
+
+.detailValue {
+  color: #2d3748;
+  font-family: 'Inter', sans-serif;
+}
+
+.profileActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px;
+}
+
+.actionButton {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #a855f7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.actionButton:hover {
+  background-color: #9333ea;
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  transform: translateY(0);
+}
+
+.secondaryButton {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #a855f7;
+  background-color: transparent;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.secondaryButton:hover {
+  background-color: #f3e8ff;
+  transform: translateY(-1px);
+}
+
+.secondaryButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profileContainer {
+    width: 90%;
+    max-width: 500px;
+    margin-left: 5%;
+    padding: 10px 0;
+    margin-bottom: 20px;
+  }
+
+  .profileCard {
+    min-height: 600px;
+    border-radius: 12px;
+  }
+
+  .profileImageWrapper {
+    padding: 20px;
+  }
+
+  .profileImage {
+    width: 150px;
+    height: 150px;
+  }
+
+  .profileInfo {
+    padding: 20px;
+  }
+
+  .profileName {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+  .profileRole {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .profileBio {
+    margin-bottom: 24px;
+  }
+
+  .profileDetails {
+    margin-bottom: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+
+  .detailItem {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .profileActions {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .actionButton,
+  .secondaryButton {
+    width: 100%;
+    padding: 12px;
+  }
+}
