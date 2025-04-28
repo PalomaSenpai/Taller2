@@ -71,11 +71,15 @@ const LoginPage = () => {
 
   const handleTutorClick = () => {
     setIsActive(true);
+    console.log('Tutor clicked, isActive:', true);
   };
 
   const handleAlumnoClick = () => {
     setIsActive(false);
+    console.log('Alumno clicked, isActive:', false);
   };
+
+  console.log('Current isActive state:', isActive);
 
   return (
     <div className={`${styles.loginBody}`}>

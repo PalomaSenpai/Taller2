@@ -120,6 +120,20 @@
   max-width: 600px;
 }
 
+.tutorEmail {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tutorEmail i {
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
 .contactButton {
   display: inline-block;
   background: #3B82F6;
@@ -193,5 +207,72 @@
 
   .tutorMeta {
     justify-content: flex-start;
+  }
+}
+
+/* Estilos para la tabla de horarios */
+.scheduleSection {
+  margin-top: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.scheduleTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1E3A8A;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.scheduleTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  color: #374151;
+}
+
+.scheduleTable th,
+.scheduleTable td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.scheduleTable th {
+  background: #E0F2FE;
+  color: #1E3A8A;
+  font-weight: 500;
+}
+
+.scheduleTable td {
+  background: #fff;
+}
+
+.available {
+  color: #10B981;
+  font-weight: 500;
+}
+
+.unavailable {
+  color: #EF4444;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 768px) {
+  .scheduleTable {
+    font-size: 14px;
+  }
+
+  .scheduleTable th,
+  .scheduleTable td {
+    padding: 8px;
+  }
+
+  .scheduleTitle {
+    font-size: 20px;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './Home.module.css'; // Asegúrate de que la ruta sea correcta
+import styles from './Home.module.css';
 
 const TutorsWindow = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,34 +11,19 @@ const TutorsWindow = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [tutors, setTutors] = useState([]); // Estado para tutores dinámicos
-  const [subjects, setSubjects] = useState([]); // Estado para materias dinámicas
-  const [loading, setLoading] = useState(true); // Estado para manejar carga
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [tutors, setTutors] = useState([]); // NUEVO
+  const [loading, setLoading] = useState(true); // NUEVO
+  const [error, setError] = useState(null); // NUEVO
   const tutorsPerPage = 6;
 
-  // Obtener tutores y materias del backend al montar el componente
+  // Obtener tutores desde el backend
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
+    const fetchTutors = async () => {
       try {
-        // Obtener tutores y sus materias
-        const tutorsResponse = await fetch('http://localhost:5000/api/tutors');
-        if (!tutorsResponse.ok) {
-          throw new Error('Error al obtener los tutores');
-        }
-        const tutorsData = await tutorsResponse.json();
-        setTutors(tutorsData);
-
-        // Obtener lista de materias para el filtro
-        const subjectsResponse = await fetch('http://localhost:5000/api/subjects');
-        if (!subjectsResponse.ok) {
-          throw new Error('Error al obtener las materias');
-        }
-        const subjectsData = await subjectsResponse.json();
-        setSubjects(subjectsData);
+        const res = await fetch('/api/tutores'); // Ruta a tu backend
+        if (!res.ok) throw new Error('Error al cargar tutores');
+        const data = await res.json();
+        setTutors(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -46,39 +31,45 @@ const TutorsWindow = () => {
       }
     };
 
-    fetchData();
+    fetchTutors();
   }, []);
 
-  // Filtrar tutores
+  // Filtros
   const filteredTutors = tutors.filter((tutor) => {
-    const matchesSearch = tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         tutor.subjects.some((subject) => subject.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesSubject = filters.subject === 'all' || tutor.subjects.includes(filters.subject);
-    const matchesAvailability = filters.availability === 'all' || tutor.availability === filters.availability;
-    const matchesRating = filters.rating === 'all' || tutor.rating >= parseFloat(filters.rating);
+    const matchesSearch =
+      tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tutor.subjects.some((subject) =>
+        subject.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    const matchesSubject =
+      filters.subject === 'all' || tutor.subjects.includes(filters.subject);
+
+    const matchesAvailability =
+      filters.availability === 'all' || tutor.availability === filters.availability;
+
+    const matchesRating =
+      filters.rating === 'all' || tutor.rating >= parseFloat(filters.rating);
+
     return matchesSearch && matchesSubject && matchesAvailability && matchesRating;
   });
 
-  // Paginación
   const totalPages = Math.ceil(filteredTutors.length / tutorsPerPage);
   const paginatedTutors = filteredTutors.slice(
     (currentPage - 1) * tutorsPerPage,
     currentPage * tutorsPerPage
   );
 
-  // Manejar filtros
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
     setCurrentPage(1);
   };
 
-  // Resetear filtros
   const resetFilters = () => {
     setFilters({ subject: 'all', availability: 'all', rating: 'all' });
     setCurrentPage(1);
   };
 
-  // Manejar responsividad de filtros
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) setShowFilters(false);
@@ -86,15 +77,6 @@ const TutorsWindow = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Mostrar estado de carga o error
-  if (loading) {
-    return <div className={styles.loading}>Cargando tutores...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>Error: {error}</div>;
-  }
 
   return (
     <div className={styles.tutorsWindow}>
@@ -138,11 +120,10 @@ const TutorsWindow = () => {
                 className={styles.filterSelect}
               >
                 <option value="all">Todas</option>
-                {subjects.map((subject) => (
-                  <option key={subject.Clave} value={subject.Nombre}>
-                    {subject.Nombre}
-                  </option>
-                ))}
+                {/* Aquí podrías generar las materias dinámicamente en el futuro */}
+                <option value="Matemáticas">Matemáticas</option>
+                <option value="Programación">Programación</option>
+                {/* Agrega más según tus datos */}
               </select>
             </div>
             <div className={styles.filterGroup}>
@@ -184,8 +165,12 @@ const TutorsWindow = () => {
           </div>
         </div>
 
-        {/* Lista de Tutores */}
-        {paginatedTutors.length > 0 ? (
+        {/* Mostrar carga o error */}
+        {loading ? (
+          <div className={styles.loading}>Cargando tutores...</div>
+        ) : error ? (
+          <div className={styles.error}>Error: {error}</div>
+        ) : paginatedTutors.length > 0 ? (
           <div className={styles.tutorsGrid}>
             {paginatedTutors.map((tutor) => (
               <Link
@@ -211,7 +196,6 @@ const TutorsWindow = () => {
                 <div className={styles.tutorDetails}>
                   <i className="bx bx-star"></i>
                   <span className={styles.tutorRating}>{tutor.rating.toFixed(1)}</span>
-                  <span className={styles.tutorAvailability}>({tutor.availability})</span>
                 </div>
               </Link>
             ))}

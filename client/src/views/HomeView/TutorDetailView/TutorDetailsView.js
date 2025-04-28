@@ -1,98 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './TutorDetail.module.css';
 
 const TutorDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [tutor, setTutor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Datos de ejemplo (puedes reemplazar con una API)
-  const tutors = [
-    {
-      id: 1,
-      name: 'Ana Gómez',
-      subjects: ['Matemáticas', 'Álgebra', 'Cálculo'],
-      rating: 4.8,
-      availability: 'Inmediata',
-      img: '/images/tutor1.webp',
-      bio: 'Apasionada por las matemáticas con 5 años de experiencia enseñando a estudiantes de todos los niveles. Especializada en álgebra y cálculo.',
-      contactEmail: 'ana.gomez@tutolynx.com',
-    },
-    {
-      id: 2,
-      name: 'Carlos Ruiz',
-      subjects: ['Programación', 'Bases de Datos'],
-      rating: 4.5,
-      availability: 'Tarde',
-      img: '/images/tutor2.webp',
-      bio: 'Desarrollador de software con 7 años de experiencia. Enseño programación práctica y bases de datos con un enfoque en proyectos reales.',
-      contactEmail: 'carlos.ruiz@tutolynx.com',
-    },
-    {
-      id: 3,
-      name: 'María López',
-      subjects: ['Física', 'Mecánica'],
-      rating: 4.9,
-      availability: 'Inmediata',
-      img: '/images/tutor3.webp',
-      bio: 'Física teórica con pasión por explicar conceptos complejos de manera sencilla. Experta en mecánica y física clásica.',
-      contactEmail: 'maria.lopez@tutolynx.com',
-    },
-    {
-      id: 4,
-      name: 'Juan Pérez',
-      subjects: ['Química', 'Química Orgánica', 'Bioquímica', 'Análisis Químico'],
-      rating: 4.2,
-      availability: 'Mañana',
-      img: '/images/tutor4.webp',
-      bio: 'Químico con experiencia en laboratorios y docencia. Ayudo a estudiantes a dominar química orgánica y bioquímica.',
-      contactEmail: 'juan.perez@tutolynx.com',
-    },
-    {
-      id: 5,
-      name: 'Sofía Martínez',
-      subjects: ['Matemáticas', 'Estadística'],
-      rating: 4.7,
-      availability: 'Inmediata',
-      img: '/images/tutor5.webp',
-      bio: 'Estadística aplicada y matemáticas para todos los niveles. Me enfoco en hacer que las matemáticas sean accesibles y divertidas.',
-      contactEmail: 'sofia.martinez@tutolynx.com',
-    },
-    {
-      id: 6,
-      name: 'Luis Fernández',
-      subjects: ['Programación', 'Algoritmos', 'Estructuras de Datos'],
-      rating: 4.6,
-      availability: 'Tarde',
-      img: '/images/tutor6.webp',
-      bio: 'Ingeniero en sistemas especializado en algoritmos y estructuras de datos. Te ayudo a programar con confianza.',
-      contactEmail: 'luis.fernandez@tutolynx.com',
-    },
-    {
-      id: 7,
-      name: 'Elena Díaz',
-      subjects: ['Física', 'Electromagnetismo'],
-      rating: 4.8,
-      availability: 'Mañana',
-      img: '/images/tutor7.webp',
-      bio: 'Doctora en física con experiencia en electromagnetismo. Enseño con ejemplos prácticos y simulaciones.',
-      contactEmail: 'elena.diaz@tutolynx.com',
-    },
-    {
-      id: 8,
-      name: 'Diego Torres',
-      subjects: ['Química', 'Química Analítica'],
-      rating: 4.3,
-      availability: 'Inmediata',
-      img: '/images/tutor8.webp',
-      bio: 'Químico analítico con experiencia en enseñanza. Te ayudo a entender química analítica desde cero.',
-      contactEmail: 'diego.torres@tutolynx.com',
-    },
+  // Obtener los datos del tutor desde el backend
+  useEffect(() => {
+    const fetchTutor = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/tutores/${id}`);
+        if (!response.ok) {
+          throw new Error('Tutor no encontrado');
+        }
+        const data = await response.json();
+        // Añadir una bio predeterminada si no está en la base de datos
+        setTutor({
+          ...data,
+          bio: data.bio || 'Este tutor no ha proporcionado una biografía todavía.'
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutor();
+  }, [id]);
+
+  // Datos estáticos de horarios (plantilla)
+  const schedule = [
+    { time: '9:00 - 11:00', monday: 'Disponible', tuesday: 'Ocupado', wednesday: 'Disponible', thursday: 'Ocupado', friday: 'Disponible' },
+    { time: '11:00 - 13:00', monday: 'Ocupado', tuesday: 'Disponible', wednesday: 'Ocupado', thursday: 'Disponible', friday: 'Ocupado' },
+    { time: '14:00 - 16:00', monday: 'Disponible', tuesday: 'Ocupado', wednesday: 'Disponible', thursday: 'Ocupado', friday: 'Disponible' },
+    { time: '16:00 - 18:00', monday: 'Ocupado', tuesday: 'Disponible', wednesday: 'Ocupado', thursday: 'Disponible', friday: 'Ocupado' },
   ];
 
-  const tutor = tutors.find((t) => t.id === parseInt(id));
+  if (loading) {
+    return (
+      <div className={styles.tutorDetails}>
+        <div className={styles.container}>
+          <p>Cargando detalles del tutor...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!tutor) {
+  if (error || !tutor) {
     return (
       <div className={styles.tutorDetails}>
         <div className={styles.container}>
@@ -135,18 +97,60 @@ const TutorDetails = () => {
                 <span>{tutor.rating.toFixed(1)}</span>
               </div>
               <div className={styles.metaItem}>
-                <i className="bx bx-time"></i>
-                <span>{tutor.availability}</span>
+                <i className="bx bx-user"></i>
+                <span>{tutor.type}</span>
               </div>
             </div>
             <p className={styles.tutorBio}>{tutor.bio}</p>
+            <p className={styles.tutorEmail}>
+              <i className="bx bx-envelope"></i> {tutor.email}
+            </p>
             <a
-              href={`mailto:${tutor.contactEmail}`}
+              href={`mailto:${tutor.email}`}
               className={styles.contactButton}
             >
               Contactar
             </a>
           </div>
+        </div>
+
+        {/* Tabla de horarios */}
+        <div className={styles.scheduleSection}>
+          <h2 className={styles.scheduleTitle}>Horarios Disponibles</h2>
+          <table className={styles.scheduleTable}>
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedule.map((slot, index) => (
+                <tr key={index}>
+                  <td>{slot.time}</td>
+                  <td className={slot.monday === 'Disponible' ? styles.available : styles.unavailable}>
+                    {slot.monday}
+                  </td>
+                  <td className={slot.tuesday === 'Disponible' ? styles.available : styles.unavailable}>
+                    {slot.tuesday}
+                  </td>
+                  <td className={slot.wednesday === 'Disponible' ? styles.available : styles.unavailable}>
+                    {slot.wednesday}
+                  </td>
+                  <td className={slot.thursday === 'Disponible' ? styles.available : styles.unavailable}>
+                    {slot.thursday}
+                  </td>
+                  <td className={slot.friday === 'Disponible' ? styles.available : styles.unavailable}>
+                    {slot.friday}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
