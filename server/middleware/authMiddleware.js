@@ -10,16 +10,16 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'tu_secreto');
-    req.user = decoded; // Almacena los datos del usuario decodificados (id, type)
+    console.log('Token decodificado:', decoded); // Depuración
+    req.user = decoded; // Almacena los datos del usuario decodificados (id, role)
     next();
   } catch (error) {
     return res.status(403).json({ message: 'Token inválido o expirado' });
   }
 };
 
-// Middleware para verificar el rol (opcional)
 const checkRole = (role) => (req, res, next) => {
-  if (req.user.type !== role) {
+  if (req.user.role !== role) { // Cambiar "type" por "role"
     return res.status(403).json({ message: `Acceso denegado: Se requiere rol ${role}` });
   }
   next();

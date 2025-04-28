@@ -4,46 +4,42 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const connection = require('../config/db');
 
-router.post('/tutor/login', (req, res, next) => {
-  console.log('Petición recibida en /tutor/login:', req.body);
+router.post('/tutor/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    console.log('Faltan email o contraseña en /tutor/login');
-    return res.status(400).json({ message: 'Email y contraseña son requeridos' });
+    return res.status(400).json({ message: 'Correo y contraseña son requeridos' });
   }
 
-  console.log('Consultando la base de datos para tutor con email:', email);
-  connection.query('SELECT * FROM Tutores WHERE Correo = ?', [email], (err, results) => {
-    if (err) {
-      console.error('Error en la consulta SQL para tutor:', err);
-      return next(err);
-    }
-    console.log('Resultados de la consulta para tutor:', results);
-    if (results.length === 0) {
-      console.log('No se encontró tutor con ese email');
-      return res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-    const tutor = results[0];
-    if (!tutor.Contra) {
-      console.error('El campo Contra está vacío para tutor:', tutor);
-      return next(new Error('El campo Contra está vacío en la base de datos'));
-    }
-    console.log('Comparando contraseña para tutor');
-    bcrypt.compare(password, tutor.Contra, (err, isMatch) => {
+  connection.query(
+    'SELECT * FROM Tutores WHERE Correo = ?',
+    [email],
+    async (err, results) => {
       if (err) {
-        console.error('Error al comparar contraseña para tutor:', err);
-        return next(err);
+        return res.status(500).json({ message: 'Error en el servidor', error: err });
       }
+
+      if (results.length === 0) {
+        return res.status(401).json({ message: 'Correo o contraseña incorrectos' });
+      }
+
+      const tutor = results[0];
+
+      const isMatch = await bcrypt.compare(password, tutor.Contra);
+
       if (!isMatch) {
-        console.log('Contraseña incorrecta para tutor');
-        return res.status(401).json({ message: 'Credenciales inválidas' });
+        return res.status(401).json({ message: 'Correo o contraseña incorrectos' });
       }
-      console.log('Generando token para tutor');
-      const token = jwt.sign({ id: tutor.NoControl, type: 'tutor' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      const token = jwt.sign(
+        { id: tutor.NoControl, role: 'tutor' },
+        process.env.JWT_SECRET || 'your_jwt_secret', // Asegúrate de que coincida con el middleware
+        { expiresIn: '1h' }
+      );
+
       res.json({ token });
-    });
-  });
+    }
+  );
 });
 
 router.post('/alumno/login', (req, res, next) => {
@@ -82,7 +78,17 @@ router.post('/alumno/login', (req, res, next) => {
         return res.status(401).json({ message: 'Credenciales inválidas' });
       }
       console.log('Generando token para alumno');
-      const token = jwt.sign({ id: alumno.NoControl, type: 'alumno' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign(
+        { id: alumno.NoControl, role: 'alumno' },
+        process.env.JWT_SECRET || 'your_jwt_secret', // Asegúrate de que coincida con el middleware
+        { expiresIn: '1h' }
+      );
+
+      console.log('Datos del token creado para alumno:', {
+        id: alumno.NoControl,
+        role: 'alumno'
+      });
+
       res.json({ token });
     });
   });
