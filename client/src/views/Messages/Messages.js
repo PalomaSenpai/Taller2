@@ -1,79 +1,150 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Messages.module.css';
 
 const Messages = () => {
+  const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [newMessage, setNewMessage] = useState('');
+  const [error, setError] = useState(null);
 
-  // Datos de ejemplo (puedes reemplazar con una API)
-  const contacts = [
-    {
-      id: 1,
-      name: 'Ana Gómez',
-      img: '/images/tutor1.webp',
-      lastMessage: '¡Hola! ¿Cuándo podemos tener la sesión?',
-      time: '10:30 AM',
-      unread: 2,
-      messages: [
-        { id: 1, text: 'Hola, estoy buscando ayuda con Cálculo.', from: 'them', time: '10:00 AM' },
-        { id: 2, text: '¡Hola! ¿Cuándo podemos tener la sesión?', from: 'them', time: '10:30 AM' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Carlos Ruiz',
-      img: '/images/tutor2.webp',
-      lastMessage: 'Entendido, te envío el material.',
-      time: 'Ayer',
-      unread: 0,
-      messages: [
-        { id: 1, text: '¿Puedes enviarme el material de Bases de Datos?', from: 'me', time: 'Ayer' },
-        { id: 2, text: 'Entendido, te envío el material.', from: 'them', time: 'Ayer' },
-      ],
-    },
-    {
-      id: 3,
-      name: 'María López',
-      img: '/images/tutor3.webp',
-      lastMessage: 'Gracias por la explicación de Física.',
-      time: 'Lunes',
-      unread: 0,
-      messages: [
-        { id: 1, text: 'Gracias por la explicación de Física.', from: 'them', time: 'Lunes' },
-        { id: 2, text: '¡De nada! Avísame si necesitas más ayuda.', from: 'me', time: 'Lunes' },
-      ],
-    },
-  ];
+  // Función para cargar los contactos desde la API
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Obtener token de localStorage
+        const response = await fetch('http://localhost:5000/api/mensajes/ver', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-  const handleSendMessage = (e) => {
+        const data = await response.json();
+        if (data.success) {
+          // Ordenar los contactos por el último mensaje (más reciente primero)
+          const sortedContacts = data.data.sort((a, b) => {
+            const lastMessageA = new Date(a.mensajes[a.mensajes.length - 1]?.fecha_hora || 0);
+            const lastMessageB = new Date(b.mensajes[b.mensajes.length - 1]?.fecha_hora || 0);
+            return lastMessageB - lastMessageA;
+          });
+          setContacts(sortedContacts); // Establecer los contactos de la API
+        } else {
+          console.error('Error al obtener los contactos');
+        }
+      } catch (err) {
+        console.error('Error en la llamada a la API:', err);
+        setError('Error al obtener los contactos');
+      }
+    };
+
+    fetchContacts();
+
+    // Polling: cada 5 segundos se hace una consulta para actualizar los mensajes
+    const intervalId = setInterval(fetchContacts, 5000); // Polling cada 5 segundos
+
+    return () => clearInterval(intervalId); // Limpiar el intervalo cuando el componente se desmonte
+  }, []);
+
+  // Función para enviar un mensaje
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedContact) return;
 
-    // Simular envío (puedes conectar con una API aquí)
-    const updatedContacts = contacts.map((contact) =>
-      contact.id === selectedContact.id
-        ? {
-            ...contact,
-            messages: [
-              ...contact.messages,
-              {
-                id: contact.messages.length + 1,
-                text: newMessage,
-                from: 'me',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              },
-            ],
-            lastMessage: newMessage,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            unread: 0,
-          }
-        : contact
-    );
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/mensajes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          destinatario_id: selectedContact.contacto_id,
+          destinatario_tipo: selectedContact.contacto_tipo,
+          texto: newMessage,
+          archivo_adjunto: null, // Si se requiere un archivo adjunto, agregarlo aquí
+        }),
+      });
 
-    // Actualizar estado (en un caso real, esto se haría con una API)
-    setNewMessage('');
-    setSelectedContact(updatedContacts.find((c) => c.id === selectedContact.id));
+      const responseData = await response.json();
+      if (responseData.success) {
+        // Actualizar los mensajes localmente después de enviar
+        const updatedContacts = contacts.map((contact) => {
+          if (contact.contacto_id === selectedContact.contacto_id) {
+            return {
+              ...contact,
+              mensajes: [
+                ...contact.mensajes,
+                {
+                  id: responseData.data.id,
+                  texto: newMessage,
+                  es_mio: true,
+                  fecha_hora: new Date().toISOString(),
+                },
+              ],
+              lastMessage: newMessage,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              unread: 0,
+            };
+          }
+          return contact;
+        });
+        setContacts(updatedContacts);
+        setNewMessage('');
+      } else {
+        console.error('Error al enviar mensaje:', responseData.message);
+        setError('Error al enviar mensaje');
+      }
+    } catch (err) {
+      console.error('Error al enviar mensaje:', err);
+      setError('Error al enviar mensaje');
+    }
   };
+
+  // Función para obtener mensajes de un contacto seleccionado
+  const getMessagesForContact = (contact) => {
+    return contact.mensajes.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora)); // Ordenar los mensajes de más antiguo a más reciente
+  };
+
+  // Función para actualizar los mensajes cuando se recibe un nuevo mensaje en el chat
+  useEffect(() => {
+    const fetchMessagesForSelectedContact = async () => {
+      if (!selectedContact) return;
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/mensajes/${selectedContact.contacto_id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          const updatedContacts = contacts.map((contact) => {
+            if (contact.contacto_id === selectedContact.contacto_id) {
+              return {
+                ...contact,
+                mensajes: data.data.mensajes,
+              };
+            }
+            return contact;
+          });
+          setContacts(updatedContacts);
+        } else {
+          console.error('Error al obtener los mensajes');
+        }
+      } catch (err) {
+        console.error('Error en la llamada a la API para mensajes:', err);
+      }
+    };
+
+    // Polling para mensajes de un contacto seleccionado
+    const intervalId = setInterval(fetchMessagesForSelectedContact, 5000); // Polling cada 5 segundos
+
+    return () => clearInterval(intervalId); // Limpiar el intervalo cuando el componente se desmonte
+  }, [selectedContact, contacts]);
 
   return (
     <div className={styles.messagesWindow}>
@@ -85,16 +156,20 @@ const Messages = () => {
               <i className="bx bx-message-square-dots"></i>
               Mensajes
             </h1>
+            {error && <p className={styles.error}>{error}</p>}
+            {contacts.length === 0 && !error && <p>No tienes mensajes.</p>}
             {contacts.map((contact) => (
               <div
-                key={contact.id}
-                className={`${styles.contact} ${selectedContact?.id === contact.id ? styles.contactActive : ''}`}
+                key={contact.contacto_id}
+                className={`${styles.contact} ${selectedContact?.contacto_id === contact.contacto_id ? styles.contactActive : ''}`}
                 onClick={() => setSelectedContact(contact)}
               >
-                <img src={contact.img} alt={contact.name} className={styles.contactImg} />
+                <img src={'/images/Profile.png'} className={styles.contactImg} />
                 <div className={styles.contactInfo}>
-                  <h3 className={styles.contactName}>{contact.name}</h3>
-                  <p className={styles.contactLastMessage}>{contact.lastMessage}</p>
+                  <h3 className={styles.contactName}>{contact.contacto_nombre}</h3>
+                  <p className={styles.contactLastMessage}>
+                    {contact.lastMessage || 'No hay mensajes aún.'}
+                  </p>
                 </div>
                 <div className={styles.contactMeta}>
                   <span className={styles.contactTime}>{contact.time}</span>
@@ -116,18 +191,19 @@ const Messages = () => {
                     onClick={() => setSelectedContact(null)}
                   >
                     <i className="bx bx-arrow-back"></i>
+                    <span className={styles.backButtonText}>Volver</span>
                   </button>
-                  <img src={selectedContact.img} alt={selectedContact.name} className={styles.chatHeaderImg} />
-                  <h2 className={styles.chatHeaderName}>{selectedContact.name}</h2>
+                  <img src={selectedContact.img || '/images/default-avatar.webp'} className={styles.chatHeaderImg} />
+                  <h2 className={styles.chatHeaderName}>{selectedContact.contacto_nombre}</h2>
                 </div>
                 <div className={styles.chatMessages}>
-                  {selectedContact.messages.map((message) => (
+                  {getMessagesForContact(selectedContact).map((message) => (
                     <div
                       key={message.id}
-                      className={`${styles.message} ${message.from === 'me' ? styles.messageSent : styles.messageReceived}`}
+                      className={`${styles.message} ${message.es_mio ? styles.messageSent : styles.messageReceived}`}
                     >
-                      <p className={styles.messageText}>{message.text}</p>
-                      <span className={styles.messageTime}>{message.time}</span>
+                      <p className={styles.messageText}>{message.texto}</p>
+                      <span className={styles.messageTime}>{new Date(message.fecha_hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   ))}
                 </div>

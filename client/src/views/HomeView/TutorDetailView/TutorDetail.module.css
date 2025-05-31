@@ -4,13 +4,13 @@
   min-height: 100vh;
   background: #F9FAFB;
   padding: 24px;
-  margin-left: 260px; /* Ajuste para la sidebar abierta */
   font-family: 'Ubuntu', sans-serif;
 }
 
 .container {
   max-width: 1280px;
   margin: 0 auto;
+  position: static;
 }
 
 .backButton {
@@ -167,49 +167,6 @@
   margin-bottom: 24px;
 }
 
-@media screen and (max-width: 768px) {
-  .tutorDetails {
-    margin-left: 60px; /* Ajuste para la sidebar colapsada */
-  }
-
-  .tutorProfile {
-    padding: 24px;
-  }
-
-  .tutorImg {
-    width: 96px;
-    height: 96px;
-  }
-
-  .tutorName {
-    font-size: 24px;
-  }
-
-  .tutorBio {
-    font-size: 14px;
-  }
-}
-
-@media screen and (min-width: 769px) {
-  .tutorProfile {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 32px;
-  }
-
-  .tutorInfo {
-    text-align: left;
-  }
-
-  .tutorSubjects {
-    justify-content: flex-start;
-  }
-
-  .tutorMeta {
-    justify-content: flex-start;
-  }
-}
-
 /* Estilos para la tabla de horarios */
 .scheduleSection {
   margin-top: 32px;
@@ -262,7 +219,182 @@
   font-weight: 500;
 }
 
+/* Estilos para la sección de comentarios */
+.commentsSection {
+  margin-top: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.commentsTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1E3A8A;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.commentForm {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.commentInput {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Ubuntu', sans-serif;
+  outline: none;
+}
+
+.commentInput:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.ratingInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ratingInput label {
+  font-size: 14px;
+  color: #1E3A8A;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.ratingSelect {
+  padding: 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Ubuntu', sans-serif;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ratingSelect:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.submitCommentButton {
+  padding: 10px 20px;
+  background: #3B82F6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitCommentButton:hover {
+  background: #2563EB;
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.commentsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.commentsList::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 4px;
+}
+
+.commentsList::-webkit-scrollbar-thumb {
+  background: #A3BFFA;
+  border-radius: 4px;
+}
+
+.commentsList::-webkit-scrollbar-thumb:hover {
+  background: #818CF8;
+}
+
+.commentItem {
+  padding: 16px;
+  background: #F9FAFB;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.commentAuthor {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1E3A8A;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.commentDate {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.commentRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  color: #FBBF24;
+  font-size: 14px;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.commentText {
+  font-size: 16px;
+  color: #374151;
+  line-height: 1.5;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+/* Media Queries */
 @media screen and (max-width: 768px) {
+  .tutorDetails {
+    margin-left: 60px;
+  }
+
+  .tutorProfile {
+    padding: 24px;
+  }
+
+  .tutorImg {
+    width: 96px;
+    height: 96px;
+  }
+
+  .tutorName {
+    font-size: 24px;
+  }
+
+  .tutorBio {
+    font-size: 14px;
+  }
+
   .scheduleTable {
     font-size: 14px;
   }
@@ -274,5 +406,64 @@
 
   .scheduleTitle {
     font-size: 20px;
+  }
+
+  .commentsTitle {
+    font-size: 20px;
+  }
+
+  .commentForm {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ratingInput {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ratingSelect {
+    width: 100%;
+  }
+
+  .submitCommentButton {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .commentsList {
+    max-height: 300px;
+  }
+
+  .commentAuthor {
+    font-size: 14px;
+  }
+
+  .commentDate {
+    font-size: 12px;
+  }
+
+  .commentText {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .tutorProfile {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .tutorInfo {
+    text-align: left;
+  }
+
+  .tutorSubjects {
+    justify-content: flex-start;
+  }
+
+  .tutorMeta {
+    justify-content: flex-start;
   }
 }

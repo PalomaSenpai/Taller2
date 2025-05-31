@@ -26,7 +26,7 @@ const LoginPage = () => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         login('tutor');
-        navigate('/');
+        navigate('/tutor-dashboard'); // Redirigir a /tutor-dashboard para tutores
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Error en el login de tutor');
@@ -56,7 +56,7 @@ const LoginPage = () => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         login('alumno');
-        navigate('/');
+        navigate('/'); // Redirigir a / para alumnos
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Error en el login de alumno');
@@ -83,7 +83,7 @@ const LoginPage = () => {
 
   return (
     <div className={`${styles.loginBody}`}>
-      <div className={`${styles.loginContainer} ${isActive ? styles.active : ""}`}>
+      <div className={`${styles.loginContainer} ${isActive ? styles.active : ''}`}>
         {/* Botones de selección en la parte superior (solo visibles en móviles) */}
         <div className={styles.loginToggleButtons}>
           <button

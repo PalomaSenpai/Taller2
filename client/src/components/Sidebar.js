@@ -6,7 +6,7 @@ import styles from './Sidebar.module.css';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
+  const { logout, userType } = useContext(AuthContext); // Añadimos userType
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -20,20 +20,28 @@ const Sidebar = () => {
     navigate('/profile'); // Redirige a /profile
   };
 
-  const navItems = [
-    { path: '/', icon: 'bx-search-alt', label: 'Inicio', tooltip: 'Inicio' }, // Corrige /# a /
-    { path: '/messages', icon: 'bx-message-square-dots', label: 'Mensajes', tooltip: 'Mensajes' },
-    { path: '/subjects', icon: 'bx-briefcase', label: 'Materias', tooltip: 'Materias' },
-    { path: '/settings', icon: 'bx-cog', label: 'Ajustes', tooltip: 'Ajustes' },
-  ];
+  // Definir navItems según el userType
+  const navItems = userType === 'tutor'
+    ? [
+        { path: '/tutor-dashboard', icon: 'bx-home', label: 'Panel', tooltip: 'Panel' },
+        { path: '/tutor-materias', icon: 'bx-calendar', label: 'Sesiones', tooltip: 'Materias' },
+        { path: '/messages', icon: 'bx-message-square-dots', label: 'Mensajes', tooltip: 'Mensajes' },
+        { path: '/tutor-profile', icon: 'bx-user', label: 'Perfil', tooltip: 'Perfil' },
+      ]
+    : [
+        { path: '/', icon: 'bx-search-alt', label: 'Inicio', tooltip: 'Inicio' },
+        { path: '/messages', icon: 'bx-message-square-dots', label: 'Mensajes', tooltip: 'Mensajes' },
+        { path: '/tutoIA', icon: 'bx-briefcase', label: 'TutoIA', tooltip: 'TutoIA' },
+        { path: '/materias', icon: 'bx-cog', label: 'Materias', tooltip: 'Materias' },
+      ];
 
   return (
     <div className={`${styles.sidebarBody} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           {isOpen && (
-            <Link to="/" className={styles.sidebarTitle}>
-              <img src="/images/lince-icon.png" alt="TutoLynx" className={styles.logoIcon} />
+            <Link to={userType === 'tutor' ? '/tutor-dashboard' : '/'} className={styles.sidebarTitle}>
+              <img src="/images/lince-icon.png" className={styles.logoIcon} />
               TutoLynx
             </Link>
           )}
@@ -68,7 +76,7 @@ const Sidebar = () => {
             <img src="/images/Profile.png" alt="Perfil" className={styles.profileImg} />
             {isOpen && (
               <>
-                <Link to="/profile" className={styles.profileName}>Lince</Link>
+                <Link to={userType === 'tutor' ? '/tutor-profile' : '/profile'} className={styles.profileName}>Lince</Link>
                 <p className={styles.profileText}>Ingeniería en Sistemas</p>
               </>
             )}

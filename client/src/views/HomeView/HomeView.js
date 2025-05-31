@@ -11,16 +11,20 @@ const TutorsWindow = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [tutors, setTutors] = useState([]); // NUEVO
-  const [loading, setLoading] = useState(true); // NUEVO
-  const [error, setError] = useState(null); // NUEVO
+  const [tempFilters, setTempFilters] = useState({
+    subject: 'all',
+    availability: 'all',
+    rating: 'all',
+  });
+  const [tutors, setTutors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const tutorsPerPage = 6;
 
-  // Obtener tutores desde el backend
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const res = await fetch('/api/tutores'); // Ruta a tu backend
+        const res = await fetch('http://localhost:5000/api/tutores');
         if (!res.ok) throw new Error('Error al cargar tutores');
         const data = await res.json();
         setTutors(data);
@@ -34,7 +38,6 @@ const TutorsWindow = () => {
     fetchTutors();
   }, []);
 
-  // Filtros
   const filteredTutors = tutors.filter((tutor) => {
     const matchesSearch =
       tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -61,13 +64,20 @@ const TutorsWindow = () => {
   );
 
   const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    setTempFilters({ ...tempFilters, [e.target.name]: e.target.value });
+  };
+
+  const applyFilters = () => {
+    setFilters({ ...tempFilters });
     setCurrentPage(1);
+    setShowFilters(false);
   };
 
   const resetFilters = () => {
+    setTempFilters({ subject: 'all', availability: 'all', rating: 'all' });
     setFilters({ subject: 'all', availability: 'all', rating: 'all' });
     setCurrentPage(1);
+    setShowFilters(false);
   };
 
   useEffect(() => {
@@ -78,14 +88,28 @@ const TutorsWindow = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div className={styles.tutorsWindow}>
       <div className={styles.container}>
-        {/* Encabezado */}
         <div className={styles.header}>
           <h1 className={styles.title}>
-            <i className="bx bx-book-reader"></i>
-            Tutores Disponibles
+            <i className="bx bx-book-reader"></i> Tutores Disponibles
           </h1>
           <div className={styles.searchBar}>
             <i className={`bx bx-search ${styles.searchIcon}`}></i>
@@ -100,7 +124,6 @@ const TutorsWindow = () => {
           </div>
         </div>
 
-        {/* Filtros */}
         <div className={styles.filtersSection}>
           <button
             className={styles.toggleFilters}
@@ -115,15 +138,13 @@ const TutorsWindow = () => {
               <select
                 id="subject"
                 name="subject"
-                value={filters.subject}
+                value={tempFilters.subject}
                 onChange={handleFilterChange}
                 className={styles.filterSelect}
               >
                 <option value="all">Todas</option>
-                {/* Aquí podrías generar las materias dinámicamente en el futuro */}
                 <option value="Matemáticas">Matemáticas</option>
                 <option value="Programación">Programación</option>
-                {/* Agrega más según tus datos */}
               </select>
             </div>
             <div className={styles.filterGroup}>
@@ -131,7 +152,7 @@ const TutorsWindow = () => {
               <select
                 id="availability"
                 name="availability"
-                value={filters.availability}
+                value={tempFilters.availability}
                 onChange={handleFilterChange}
                 className={styles.filterSelect}
               >
@@ -146,7 +167,7 @@ const TutorsWindow = () => {
               <select
                 id="rating"
                 name="rating"
-                value={filters.rating}
+                value={tempFilters.rating}
                 onChange={handleFilterChange}
                 className={styles.filterSelect}
               >
@@ -156,16 +177,14 @@ const TutorsWindow = () => {
                 <option value="4.8">4.8+</option>
               </select>
             </div>
-            <button
-              onClick={resetFilters}
-              className={styles.resetButton}
-            >
-              Limpiar Filtros
-            </button>
+            <div className={styles.filterActions}>
+              <button onClick={resetFilters} className={styles.resetButton}>
+                Limpiar Filtros
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mostrar carga o error */}
         {loading ? (
           <div className={styles.loading}>Cargando tutores...</div>
         ) : error ? (
@@ -180,15 +199,17 @@ const TutorsWindow = () => {
                 aria-label={`Ver detalles de ${tutor.name}`}
               >
                 <div className={styles.tutorInfo}>
-                  <img src={tutor.img} alt={tutor.name} className={styles.tutorImg} />
+                  <img src='/images/Profile.png' className={styles.tutorImg} alt={tutor.name} />
                   <div>
                     <h3 className={styles.tutorName}>{tutor.name}</h3>
                     <div className={styles.tutorSubjects}>
-                      {tutor.subjects.slice(0, 3).map((subject, index) => (
+                      {tutor.subjects.slice(0, 2).map((subject, index) => (
                         <span key={index} className={styles.subjectTag}>{subject}</span>
                       ))}
-                      {tutor.subjects.length > 3 && (
-                        <span className={styles.subjectTag}>+{tutor.subjects.length - 3} más</span>
+                      {tutor.subjects.length > 2 && (
+                        <span className={styles.subjectTag}>
+                          +{tutor.subjects.length - 2}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -196,6 +217,11 @@ const TutorsWindow = () => {
                 <div className={styles.tutorDetails}>
                   <i className="bx bx-star"></i>
                   <span className={styles.tutorRating}>{tutor.rating.toFixed(1)}</span>
+                  {tutor.availability && (
+                    <span className={styles.tutorAvailability}>
+                      | {tutor.availability}
+                    </span>
+                  )}
                 </div>
               </Link>
             ))}
@@ -207,7 +233,6 @@ const TutorsWindow = () => {
           </div>
         )}
 
-        {/* Paginación */}
         {totalPages > 1 && (
           <div className={styles.pagination}>
             <button
@@ -215,9 +240,9 @@ const TutorsWindow = () => {
               disabled={currentPage === 1}
               className={styles.paginationButton}
             >
-              Anterior
+              <i className="bx bx-chevron-left"></i>
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            {getPageNumbers().map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
@@ -231,7 +256,7 @@ const TutorsWindow = () => {
               disabled={currentPage === totalPages}
               className={styles.paginationButton}
             >
-              Siguiente
+              <i className="bx bx-chevron-right"></i>
             </button>
           </div>
         )}

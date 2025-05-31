@@ -88,10 +88,12 @@ router.post('/alumno/login', (req, res, next) => {
         id: alumno.NoControl,
         role: 'alumno'
       });
-
+      console.log('Token generado para alumno:', token);
       res.json({ token });
     });
   });
 });
+
+
 
 module.exports = router;

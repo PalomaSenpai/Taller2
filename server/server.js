@@ -7,7 +7,7 @@ const app = express();
 
 // Configuración de CORS para permitir peticiones desde el frontend
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));

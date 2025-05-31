@@ -1,0 +1,168 @@
+.pageContainer {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  overflow-x: auto;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 40px;
+  width: 100%;
+  position: relative;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.graphContainer {
+  position: relative;
+  min-height: 120vh; /* Aumentado para permitir más tarjetas verticalmente */
+  max-width: 2000px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px; /* Reducido para menos espacio entre tarjetas */
+}
+
+.subjectCard {
+  position: absolute;
+  width: 180px; /* Reducido para que quepan más tarjetas */
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 12px; /* Reducido para un diseño más compacto */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+  /* Ajuste de posición vertical: Reducido el factor de separación entre semestres */
+  top: calc((var(--semester, 1) - 1) * 10%); /* Reducido de 20% a 10% */
+  left: calc(var(--index, 0) * 12%); /* Ajustado para mantener proporción horizontal */
+}
+
+.subjectCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px; /* Reducido para menos espacio interno */
+}
+
+.subjectCode {
+  font-size: 0.85rem; /* Reducido para un diseño más compacto */
+  font-weight: 600;
+  color: #1e3a8a;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.semester {
+  font-size: 0.75rem; /* Reducido para un diseño más compacto */
+  color: #4a5568;
+  font-family: 'Poppins', sans-serif;
+}
+
+.cardBody {
+  text-align: center;
+}
+
+.subjectName {
+  font-size: 1rem; /* Reducido para un diseño más compacto */
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px; /* Reducido para menos espacio interno */
+  font-family: 'Poppins', sans-serif;
+}
+
+.subjectDetails {
+  font-size: 0.85rem; /* Reducido para un diseño más compacto */
+  color: #4a5568;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.connectionLine {
+  position: absolute;
+  background: linear-gradient(90deg, #3b82f6 0%, #a855f7 100%);
+  width: 2px;
+  height: 2px;
+  transform-origin: 0 0;
+  z-index: 0;
+}
+
+.connectionLine::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  transform: rotate(45deg);
+  top: -50%;
+  left: -50%;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .graphContainer {
+    max-width: 1500px;
+  }
+
+  .subjectCard {
+    width: 160px; /* Reducido para que quepan más tarjetas */
+    padding: 10px;
+  }
+
+  .subjectName {
+    font-size: 0.9rem;
+  }
+
+  .subjectDetails {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .graphContainer {
+    max-width: 1000px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subjectCard {
+    position: static;
+    width: 140px; /* Reducido para un diseño más compacto */
+    margin: 8px 0; /* Reducido para menos espacio vertical */
+  }
+
+  .connectionLine {
+    display: none;
+  }
+}
